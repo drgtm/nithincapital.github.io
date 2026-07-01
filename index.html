@@ -118,7 +118,7 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 .toc-desc { font-family: var(--mono); font-size: 12px; line-height: 1.7; color: var(--blue); opacity: 0.6; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.5px; }
 
 /* ============ ESSAY TEXT ============ */
-.prose { max-width: 720px; }
+.prose { max-width: 800px; margin-left: auto; margin-right: auto; }
 .prose.center { margin: 0 auto; }
 .prose p {
   font-family: var(--mono);
@@ -136,6 +136,7 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
   font-size: 11px; font-weight: 700;
   letter-spacing: 3px; text-transform: uppercase;
   margin-bottom: 16px;
+  max-width: 800px; margin-left: auto; margin-right: auto;
 }
 .white-section .sec-label { color: var(--blue); opacity: 0.4; }
 .blue-section .sec-label { color: rgba(255,255,255,0.4); }
@@ -147,11 +148,13 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
   line-height: 1.05;
   letter-spacing: -1px;
   margin-bottom: 48px;
+  max-width: 800px; margin-left: auto; margin-right: auto;
 }
 
 /* ============ PULL QUOTE ============ */
 .pull {
-  margin: 64px 0;
+  margin: 64px auto;
+  max-width: 800px;
   padding: 40px 0;
   border-top: 3px solid currentColor;
 }
@@ -174,7 +177,8 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 
 /* ============ INTERNAL MONOLOGUE ============ */
 .mind {
-  margin: 40px 0;
+  margin: 40px auto;
+  max-width: 800px;
   padding: 28px 32px;
   border: 1px solid;
   position: relative;
@@ -198,7 +202,8 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 
 /* ============ DECISION NODE ============ */
 .node {
-  margin: 40px 0;
+  margin: 40px auto;
+  max-width: 800px;
   padding: 28px 32px;
 }
 .white-section .node { background: var(--blue); color: var(--white); }
@@ -291,14 +296,14 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 
 <!-- HERO (blue) -->
 <header class="hero">
-  <div class="hero-label">Essay · June 2026 · Open Source</div>
+  <div class="hero-label"></div>
   <h1>
     <span class="line">The</span>
     <span class="line">Intention</span>
     <span class="line">of Effort</span>
   </h1>
   <div class="hero-sub">
-    11:47pm. Bangalore. A phone line connects to a stranger in Oklahoma who does not know I exist. They say one word. I have three seconds to decide everything that happens next. This is what runs underneath.
+    11:47pm. Bangalore. A phone line connects to a stranger in Oklahoma who does not know I exist. They say one word. I have three seconds to decide everything that happens next.
   </div>
   <div class="hero-meta">
     <span>Nithin Nair</span>
@@ -318,15 +323,16 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
     <div class="sec-label reveal">Contents</div>
     <div class="sec-title reveal">What is in here</div>
     <div class="toc-grid">
-      <div class="toc-item reveal"><div class="toc-num">#1 Origins</div><div class="toc-title">Where the Pattern Engine Comes From</div><div class="toc-desc">Hawking, esports, drones, a bar in Bangalore, and the accidental path into sales.</div></div>
-      <div class="toc-item reveal"><div class="toc-num">#2 Contact</div><div class="toc-title">The First Three Seconds</div><div class="toc-desc">What is actually running in my head the moment someone picks up. The decision tree before I say a word.</div></div>
-      <div class="toc-item reveal"><div class="toc-num">#3 Signals</div><div class="toc-title">Reading the Room Through a Phone Line</div><div class="toc-desc">No body language. One audio channel. More information in it than most people think.</div></div>
-      <div class="toc-item reveal"><div class="toc-num">#4 Nothing</div><div class="toc-title">The Silence War</div><div class="toc-desc">A second-by-second breakdown of what happens when I stop talking and let the line go dead.</div></div>
-      <div class="toc-item reveal"><div class="toc-num">#5 Fork</div><div class="toc-title">The Pivot Moment</div><div class="toc-desc">Every call forks between 20 and 45 seconds in. How I decide which branch to take.</div></div>
-      <div class="toc-item reveal"><div class="toc-num">#6 Mirror</div><div class="toc-title">The Echo</div><div class="toc-desc">Repeating their exact words back. Why it works mechanically, not just emotionally.</div></div>
-      <div class="toc-item reveal"><div class="toc-num">#7 Retreat</div><div class="toc-title">The Pull-Away</div><div class="toc-desc">The most counterintuitive move. Offering the exit is what earns the stay.</div></div>
-      <div class="toc-item reveal"><div class="toc-num">#8 Release</div><div class="toc-title">When to Let Go</div><div class="toc-desc">Knowing when the call is dead and having the discipline to stop.</div></div>
-      <div class="toc-item reveal"><div class="toc-num">#9 Source</div><div class="toc-title">The Source Code</div><div class="toc-desc">6pm to 2am. Motorcycles. The night shift. What runs underneath everything.</div></div>
+      <div class="toc-item reveal"><div class="toc-num">#1 Origins</div><div class="toc-title">Where the Pattern Engine Comes From</div><div class="toc-desc">Hawking, Sagan, a music video on repeat since 2009, esports, drones, a bar in Bangalore, and the accidental path into sales.</div></div>
+      <div class="toc-item reveal"><div class="toc-num">#2 Runway</div><div class="toc-title">The Runway</div><div class="toc-desc">What each thing actually taught me. Distilled.</div></div>
+      <div class="toc-item reveal"><div class="toc-num">#3 Contact</div><div class="toc-title">The First Three Seconds</div><div class="toc-desc">What is actually running in my head the moment someone picks up. The decision tree before I say a word.</div></div>
+      <div class="toc-item reveal"><div class="toc-num">#4 Signals</div><div class="toc-title">Reading the Room Through a Phone Line</div><div class="toc-desc">No body language. One audio channel. More information in it than most people think.</div></div>
+      <div class="toc-item reveal"><div class="toc-num">#5 Nothing</div><div class="toc-title">The Silence War</div><div class="toc-desc">A second-by-second breakdown of what happens when I stop talking and let the line go dead.</div></div>
+      <div class="toc-item reveal"><div class="toc-num">#6 Fork</div><div class="toc-title">The Pivot Moment</div><div class="toc-desc">Every call forks between 20 and 45 seconds in. How I decide which branch to take.</div></div>
+      <div class="toc-item reveal"><div class="toc-num">#7 Mirror</div><div class="toc-title">The Echo</div><div class="toc-desc">Repeating their exact words back. Why it works mechanically, not just emotionally.</div></div>
+      <div class="toc-item reveal"><div class="toc-num">#8 Retreat</div><div class="toc-title">The Pull-Away</div><div class="toc-desc">The most counterintuitive move. Offering the exit is what earns the stay.</div></div>
+      <div class="toc-item reveal"><div class="toc-num">#9 Release</div><div class="toc-title">When to Let Go</div><div class="toc-desc">Knowing when the call is dead and having the discipline to stop.</div></div>
+      <div class="toc-item reveal"><div class="toc-num">#10 Origin</div><div class="toc-title">Origin</div><div class="toc-desc">What runs underneath everything.</div></div>
     </div>
   </div>
 </section>
@@ -342,6 +348,9 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
     <div class="prose reveal">
       <p>When I was fifteen I picked up Stephen Hawking's A Brief History of Time. I did not understand most of it. But one thing landed and never left: we are sitting on a rock orbiting an unremarkable star in one of a hundred billion galaxies, and the piece of reality we can actually observe is so small it rounds to nothing. Everything we think we know is built on a fraction of the data.</p>
       <p>That idea did something to how I process things. Not in an intellectual way. In a mechanical way. It installed a default setting: your first read on any situation is almost certainly incomplete. Do not trust it. Keep looking.</p>
+      <p>Carl Sagan said something similar from a different angle. Everything that has ever happened to anyone, every war, every love story, every invention, took place on a speck so small that from far enough away it disappears into a sunbeam. The point was not that nothing matters. The point was that context is everything. What looks enormous up close becomes nothing from a distance. What looks like nothing up close becomes the only thing that matters.</p>
+      <p>There is a music video from 2009 that has stayed with me for years. Luv Deluxe by Cinnamon Chasers. No lyrics. No dialogue. A man meets a woman at a gas station and the video plays the encounter three different ways. Three timelines. Three sets of choices. He follows her lead and they get arrested. He takes charge and it turns violent. He tries to do the right thing and she shoots him. Every timeline ends badly. The smallest choice forks reality into a completely different outcome and none of them are the one you wanted.</p>
+      <p>Someone in the comments described it perfectly: it tells a story with no words, it paints a picture without paint, it shows us that in life you have many options and the option you choose is not always the best one. Someone else said it feels like something that finds you when you need to see it, not when you want to. I have watched it more times than I can count. It is the closest visual representation I have found of what a cold call actually feels like from the inside. A stranger answers. In the next few seconds you are choosing a timeline. You do not get to see how the other ones play out. You commit to one and you live with it.</p>
       <p>I wanted to be an astronomer. Then a pilot. Then I studied aerospace engineering and spent my time building drones. Then COVID came and wiped all of those paths off the table simultaneously. No aviation jobs. No engineering openings. Nothing.</p>
       <p>So I did marketing for a bar in Bangalore. Promoting events. Getting bodies through the door. Learning, without knowing I was learning, how to make a stranger feel like they should be here instead of somewhere else.</p>
       <p>Before all of that, I was captaining an esports team. Critical Ops, PUBG Mobile, Call of Duty Mobile. Top 6 in Asia. Tournaments where the whole thing turns on a four-second decision and five people are screaming in your ear and you have to process all of it and commit to a call and live with whatever happens next. That is not a metaphor for sales. That is sales. The same cognitive operation running on different inputs.</p>
@@ -351,10 +360,37 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
   </div>
 </section>
 
-<!-- SECTION 2 (white) -->
+
+<!-- SECTION 2 (white) — THE RUNWAY -->
 <section class="white-section">
   <div class="inner">
-    <div class="sec-label reveal">#2 Contact</div>
+    <div class="sec-label reveal">#2 Runway</div>
+    <div class="sec-title reveal">The Runway</div>
+    <div class="prose reveal">
+      <p>Before I ever made a cold call, I spent years building something I did not have a name for. Looking back, every phase installed a specific piece of the operating system I now run on the phone. Here is what each one actually taught me.</p>
+    </div>
+    <div class="mind reveal">
+      <p><b>Astronomy.</b> A Brief History of Time at fifteen. Installed one rule that never left: the observable slice is never the full picture. Do not trust your first read. There is always more data outside the frame. On a call, this means the first thing someone says is almost never the real thing. Keep looking.</p>
+      <p><b>The pilot dream.</b> Short-lived but it left something. When you commit to a heading, you hold it. You do not second-guess mid-flight. Hesitation at altitude kills. On a call, once I choose a direction, I follow it through. If it is wrong, I correct after, not during.</p>
+      <p><b>Aerospace and drones.</b> Systems thinking. A drone is not one thing. It is a hundred components interacting, and if one fails, the whole thing falls out of the sky. A cold call is the same. Tone, timing, words, silence, intent, context. They are all coupled. You cannot fix one in isolation.</p>
+      <p><b>Esports.</b> Top 6 in Asia. Captaining five people screaming in my ear while the round turns on a four-second window. This taught me how to process multiple streams of information under pressure and commit to a call before I have all the data. Every cold call is a slower version of that same moment. Incomplete information, a closing window, and a decision that locks in the next thirty seconds.</p>
+      <p><b>The bar in Bangalore.</b> COVID killed every plan I had. I promoted events to pay rent. Getting strangers through a door taught me something no textbook covers: attention is not given. It is earned. And it is earned in the first few seconds by making someone feel like this place, this moment, is where they are supposed to be. That is the opener on every cold call. Not a pitch. A feeling.</p>
+      <p><b>Motorcycles and racing.</b> A corner at speed is the purest test of nerve I know. The moment you hesitate, you run wide. The moment you brake out of fear, you lose the line. The only way through is to pick your entry point, commit, and hold steady while your entire body screams at you to stop. Cold calling is the same physics at a different speed. The people who flinch mid-sentence lose the conversation. The people who hold their line carry speed through to the other side.</p>
+      <p><b>Luv Deluxe.</b> A music video with no words that plays the same encounter three ways. Three timelines. Three sets of choices. All of them end badly. It taught me that the smallest fork in a decision tree changes everything downstream and you never get to see how the other branches play out. On every call, I am choosing a timeline and living with it. The only thing I control is the intention behind the choice.</p>
+    </div>
+    <div class="prose reveal">
+      <p>None of these things were preparation for sales. Every single one of them was. The phone just happened to be the surface where all of it finally had a use.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ENTROPY -->
+<div class="entropy-wrap entropy-divider"><canvas id="e2b"></canvas></div>
+
+<!-- SECTION 3 (white) — CONTACT -->
+<section class="white-section">
+  <div class="inner">
+    <div class="sec-label reveal">#3 Contact</div>
     <div class="sec-title reveal">The first three seconds</div>
     <div class="prose reveal">
       <p>Someone picks up. They say a word. Sometimes just a syllable. "Yeah?" or "Hello?" or their name. That single sound is the most information-dense moment on the call and almost everyone blows past it because they are busy thinking about what they are going to say next.</p>
@@ -388,7 +424,7 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 <!-- SECTION 3 (blue) -->
 <section class="blue-section">
   <div class="inner">
-    <div class="sec-label reveal">#3 Signals</div>
+    <div class="sec-label reveal">#4 Signals</div>
     <div class="sec-title reveal">Reading the room through a phone line</div>
     <div class="prose reveal">
       <p>No body language. No eye contact. No arms crossed or uncrossed. One channel. Audio. And inside that single channel there is more data than most people realise.</p>
@@ -408,7 +444,7 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 <!-- SECTION 4 (white) -->
 <section class="white-section">
   <div class="inner">
-    <div class="sec-label reveal">#4 Nothing</div>
+    <div class="sec-label reveal">#5 Nothing</div>
     <div class="sec-title reveal">The silence war</div>
     <div class="prose reveal">
       <p>The hardest thing I have learned in sales is to stop talking. Not pause. Stop. Let the line go dead for four, five, six seconds while everything in me screams to fill it with something. A clarification. A redirect. A nervous laugh. Anything. I do not. I let the silence sit there like a living thing between me and the other person.</p>
@@ -433,7 +469,7 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 <!-- SECTION 5 (blue) -->
 <section class="blue-section">
   <div class="inner">
-    <div class="sec-label reveal">#5 Fork</div>
+    <div class="sec-label reveal">#6 Fork</div>
     <div class="sec-title reveal">The pivot moment</div>
     <div class="prose reveal">
       <p>Between 20 and 45 seconds in, every cold call forks. The prospect says something. It is either a real objection, a reflexive brush-off, or a clue wearing the costume of a rejection. The whole call depends on which one you identify it as. You have about two seconds.</p>
@@ -455,7 +491,7 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 <!-- SECTION 6 (white) -->
 <section class="white-section">
   <div class="inner">
-    <div class="sec-label reveal">#6 Mirror</div>
+    <div class="sec-label reveal">#7 Mirror</div>
     <div class="sec-title reveal">The echo</div>
     <div class="prose reveal">
       <p>When a prospect says something real, I repeat their exact words back to them. Not a paraphrase. Not a reframe. Their words. If they say "the footage thing is a nightmare," I say "the footage thing is a nightmare." Full stop. Then silence.</p>
@@ -477,7 +513,7 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 <!-- SECTION 7 (blue) -->
 <section class="blue-section">
   <div class="inner">
-    <div class="sec-label reveal">#7 Retreat</div>
+    <div class="sec-label reveal">#8 Retreat</div>
     <div class="sec-title reveal">The pull-away</div>
     <div class="prose reveal">
       <p>After describing a set of problems that people in their position commonly deal with, after I have watched for the reaction, after they have claimed a pain or shown a flicker of recognition, I do not lean in. I lean out.</p>
@@ -501,7 +537,7 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 <!-- SECTION 8 (white) -->
 <section class="white-section">
   <div class="inner">
-    <div class="sec-label reveal">#8 Release</div>
+    <div class="sec-label reveal">#9 Release</div>
     <div class="sec-title reveal">When to let go</div>
     <div class="prose reveal">
       <p>Most calls are not meetings. The skill that separates the reps who last from the ones who burn out is knowing when to stop.</p>
@@ -525,13 +561,13 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 <!-- SECTION 9 (blue) -->
 <section class="blue-section">
   <div class="inner">
-    <div class="sec-label reveal">#9 Source</div>
-    <div class="sec-title reveal">The source code</div>
+    <div class="sec-label reveal">#10 Origin</div>
+    <div class="sec-title reveal">Origin</div>
     <div class="prose reveal">
       <p>I work a night shift from Bangalore. 6pm to 2am, five nights a week, calling into a country I have never been to, talking to people I will probably never meet in person. Before the shift I ride motorcycles. After the shift I sleep or I do not and the phone rings again the next evening and I do it again.</p>
       <p>People ask why. The honest answer is that I love the puzzle. Not in a motivational way. The way a chess player loves a board. Every call is a new position. Incomplete information, a ticking clock, a series of micro-decisions that compound. Sometimes it is a meeting. Sometimes it is a hang-up. But the process, the act of reading a stranger through a phone line and figuring out whether there is a way to be useful to them, that is the part I find endlessly interesting.</p>
       <p>The connection to Hawking is not a reach. It is how I genuinely think about the work. Every call is an observation of a tiny slice of someone's reality. I cannot see the whole picture. I never will. But if I watch carefully, if I listen without assumptions, if I hold silence when instinct says talk, sometimes a pattern emerges that tells me something true about what this person needs. When that happens, it stops being a sales call and starts being a real exchange between two people trying to figure something out.</p>
-      <p>That is the source code. Not the script. Not the sequence. Not the cadence or the AI-graded opener score. The source code is the intention to understand before you speak. To observe before you act. To treat every "hello?" as a new dataset and meet it with genuine curiosity about what you might find.</p>
+      <p>That is the origin. Not the script. Not the sequence. Not the cadence or the AI-graded opener score. The source code is the intention to understand before you speak. To observe before you act. To treat every "hello?" as a new dataset and meet it with genuine curiosity about what you might find.</p>
       <p>Everything else, the scripts, the tools, the frameworks, is the interface layer. It matters. But it is not the engine.</p>
       <p>The engine is whether, at 11:30pm on a Tuesday in Bangalore, when a stranger in another timezone picks up the phone and says "yeah?", your first impulse is to pitch or to listen.</p>
       <p>If it is to listen, you are running the right code.</p>
@@ -594,7 +630,7 @@ function initEntropy(id, height) {
 }
 
 // Init all entropy canvases
-['e1','e2','e3','e4','e5','e6','e7'].forEach(id => {
+['e1','e2','e2b','e3','e4','e5','e6','e7'].forEach(id => {
   const el = document.getElementById(id);
   if (el) initEntropy(id, el.parentElement.offsetHeight);
 });
