@@ -26,17 +26,18 @@
   .hdr .s { font-size:10.5px; color:var(--dim); letter-spacing:0.13em; text-transform:uppercase; text-shadow:0 2px 20px rgba(0,0,0,1); }
 
   /* era readout — tells you where in evolutionary time you are */
-  #era { position:absolute; top:52px; right:30px; z-index:30; text-align:right; pointer-events:none; text-shadow:0 2px 12px rgba(0,0,0,1); }
+  #era { position:absolute; bottom:78px; right:30px; z-index:30; text-align:right; pointer-events:none; text-shadow:0 2px 12px rgba(0,0,0,1); max-width:260px; }
   #era .e-lbl { font-size:10px; letter-spacing:0.14em; text-transform:uppercase; color:var(--dimmer); }
   #era .e-name { font-size:13px; font-weight:500; margin-top:3px; }
 
   /* LEFT — layer/era context */
-  #ctxPanel { position:absolute; left:0; top:0; bottom:0; width:330px; z-index:20;
-    padding:76px 36px 40px 30px; pointer-events:none; transition:opacity 0.35s ease; opacity:0;
+  #ctxPanel { position:absolute; left:0; top:0; bottom:0; width:360px; z-index:26;
+    background:linear-gradient(90deg, rgba(2,3,8,0.97) 58%, rgba(2,3,8,0));
+    padding:88px 52px 40px 30px; pointer-events:none; transition:opacity 0.35s ease; opacity:0;
     display:flex; flex-direction:column; justify-content:center; }
   #ctxPanel.show { opacity:1; }
-  #ctxPanel::before { content:''; position:absolute; inset:0; z-index:-1;
-    background:linear-gradient(90deg, rgba(2,3,8,0.93) 52%, rgba(2,3,8,0)); }
+  /* when the context panel is showing, dim the legend so the two never clash */
+  body:has(#ctxPanel.show) #legend, body.ctx-open #legend { opacity:0; transition:opacity 0.3s ease; }
   .cx-i { font-size:10px; letter-spacing:0.15em; text-transform:uppercase; margin-bottom:12px; }
   .cx-t { font-family:var(--serif); font-size:30px; font-weight:600; line-height:1.1; letter-spacing:-0.01em; margin-bottom:8px; }
   .cx-r { font-size:12.5px; color:var(--dim); margin-bottom:20px; letter-spacing:0.03em; }
@@ -81,7 +82,7 @@
   #tip .tg { font-size:11px; color:#c7ccca; line-height:1.45; }
   #tip .th { font-size:9.5px; color:var(--dimmer); margin-top:8px; letter-spacing:0.04em; }
 
-  #legend { position:absolute; bottom:64px; left:30px; z-index:25; display:grid; grid-template-columns:1fr 1fr; gap:3px 14px; max-width:520px; }
+  #legend { position:absolute; bottom:64px; left:30px; z-index:25; display:grid; grid-template-columns:1fr 1fr; gap:3px 14px; max-width:520px; opacity:1; transition:opacity 0.3s ease; }
   .lg { display:flex; align-items:center; gap:7px; font-size:10.5px; color:var(--dim); cursor:pointer; transition:color 0.15s; text-shadow:0 1px 10px rgba(0,0,0,1); }
   .lg:hover { color:var(--ink); } .lg.off { opacity:0.3; }
   .lg .dot { width:8px; height:8px; border-radius:50%; flex-shrink:0; box-shadow:0 0 8px currentColor; }
@@ -166,27 +167,30 @@
     .cb { padding:9px 12px; font-size:12px; }
     .readout { min-width:0; font-size:10px; padding:0 6px; }
 
-    /* LEFT context panel → top banner sheet */
-    #ctxPanel { left:0; right:0; top:0; bottom:auto; width:auto; height:auto; max-height:44vh;
-      padding:16px 18px 18px; justify-content:flex-start;
-      transform:translateY(-100%); transition:transform 0.4s cubic-bezier(0.16,1,0.3,1); opacity:1; }
-    #ctxPanel::before { background:linear-gradient(180deg, rgba(2,3,8,0.97) 70%, rgba(2,3,8,0)); }
+    /* LEFT context panel → top banner sheet (solid, opaque) */
+    #ctxPanel { left:0; right:0; top:0; bottom:auto; width:auto; height:auto; max-height:50vh;
+      padding:20px 20px 24px; justify-content:flex-start;
+      background:#05070e; border-bottom:0.5px solid var(--line);
+      transform:translateY(-100%); transition:transform 0.4s cubic-bezier(0.16,1,0.3,1); opacity:1; z-index:45; }
     #ctxPanel.show { transform:translateY(0); }
     .cx-t { font-size:24px; }
     .cx-b { font-size:12.5px; }
     .cx-learn { margin-top:12px; padding:11px 13px; }
 
-    /* RIGHT detail panel → bottom sheet */
-    #detPanel { left:0; right:0; top:auto; bottom:0; width:auto; height:auto; max-height:82vh;
-      padding:20px 20px 32px; border-left:none; border-top:0.5px solid var(--line);
-      border-radius:18px 18px 0 0;
-      transform:translateY(100%); transition:transform 0.44s cubic-bezier(0.16,1,0.3,1); }
+    /* RIGHT detail panel → bottom sheet (solid, opaque, tall) */
+    #detPanel { left:0; right:0; top:auto; bottom:0; width:auto; height:auto; max-height:88vh;
+      padding:26px 20px 32px; border-left:none; border-top:0.5px solid var(--line);
+      border-radius:18px 18px 0 0; background:#05070e;
+      transform:translateY(100%); transition:transform 0.44s cubic-bezier(0.16,1,0.3,1); z-index:50; }
     #detPanel.open { transform:translateY(0); }
     /* grab handle */
     #detPanel::before { content:''; position:absolute; top:9px; left:50%; transform:translateX(-50%);
       width:38px; height:4px; border-radius:2px; background:rgba(255,255,255,0.2); }
     .pc { top:16px; right:16px; }
     .d-t { font-size:21px; }
+
+    /* when a sheet is open, hide the top chrome so nothing shows through/behind */
+    body.sheet-open .hdr, body.sheet-open #search, body.sheet-open #era { opacity:0; pointer-events:none; transition:opacity 0.25s; }
 
     /* intro: tighten */
     #introInner { padding:40px 26px; }
@@ -206,7 +210,6 @@
 
   <div class="hdr">
     <div class="t">The Origin <span>· how the craft evolved</span></div>
-    <div class="s">center = the source · out = human skill evolving · edges = what AI does now</div>
   </div>
   <div id="era"><div class="e-lbl">you are viewing</div><div class="e-name" id="eraName">the whole evolution</div></div>
 
@@ -580,7 +583,11 @@ window.addEventListener('mouseup',()=>{dragging=false;stage.classList.remove('dr
 window.addEventListener('mousemove',(e)=>{ if(!entered)return;
   if(dragging){ const dx=(e.clientX-dragStart.x)/cam.z,dy=(e.clientY-dragStart.y)/cam.z; targetCam.x=camStart.x-dx;targetCam.y=camStart.y-dy; return; }
   const best=pickOrb(e.clientX,e.clientY);
-  if(best!==hoverOrb){ hoverOrb=best; showTip(best,e.clientX,e.clientY); if(best) showContext(best); }
+  if(best!==hoverOrb){
+    hoverOrb=best; showTip(best,e.clientX,e.clientY);
+    if(best) showContext(best);
+    else if(!activeOrb){ document.getElementById('ctxPanel').classList.remove('show'); document.body.classList.remove('ctx-open'); } // clear when not on an orb
+  }
   else if(best) moveTip(e.clientX,e.clientY);
 });
 stage.addEventListener('wheel',(e)=>{if(!entered)return;
@@ -642,7 +649,7 @@ stage.addEventListener('touchend',(e)=>{ if(!entered)return;
   // a quick, still touch = tap → select the orb under it
   if(tapCandidate && !tMoved && (Date.now()-tapCandidate.time)<300){
     const best=pickOrb(tapCandidate.x, tapCandidate.y);
-    if(best){ hoverOrb=best; showContext(best); openDetail(best); }
+    if(best){ hoverOrb=best; openDetail(best); }  // mobile: detail sheet only, no top banner
     else {
       hoverOrb=null;
       // tapped empty space: if a sheet is open, close it
@@ -687,6 +694,7 @@ function showTip(o,px,py){ const tip=document.getElementById('tip');
 function moveTip(px,py){const t=document.getElementById('tip');t.style.left=px+'px';t.style.top=py+'px';}
 
 function showContext(o){ const p=document.getElementById('ctxPanel');
+  document.body.classList.add('ctx-open');
   let i,t,r,b,learn;
   if(o.kind==='human'){ const R=REGIONS[o.bucket];
     i='Human craft · '+R[1]; document.getElementById('cxI').style.color=BHEX[o.bucket];
@@ -712,6 +720,7 @@ function showContext(o){ const p=document.getElementById('ctxPanel');
 }
 
 function openDetail(o){ activeOrb=o;
+  document.body.classList.add('sheet-open');
   const dc=document.getElementById('dContent');
   if(o.kind==='human'){
     document.getElementById('dI').textContent=BUCKETS[o.bucket]; document.getElementById('dI').style.color=BHEX[o.bucket];
@@ -759,6 +768,7 @@ function fillLinks(nums,kind){ const el=document.getElementById('dLinks'); if(!e
 }
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 function closeDetail(){ activeOrb=null; document.getElementById('detPanel').classList.remove('open');
+  document.body.classList.remove('sheet-open');
   // on mobile, also dismiss the top context banner so the field is clear
   if(window.matchMedia('(max-width:768px)').matches){ document.getElementById('ctxPanel').classList.remove('show'); }
 }
