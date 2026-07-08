@@ -24,6 +24,11 @@
   .hdr .t { font-family:var(--serif); font-size:17px; font-weight:600; letter-spacing:0.01em; text-shadow:0 2px 20px rgba(0,0,0,1); }
   .hdr .t span { font-family:var(--mono); color:var(--dim); font-weight:400; font-size:12px; }
   .hdr .s { font-size:10.5px; color:var(--dim); letter-spacing:0.13em; text-transform:uppercase; text-shadow:0 2px 20px rgba(0,0,0,1); }
+  .hdr .nav-link { font-family:var(--mono); font-size:11px; letter-spacing:0.14em; text-transform:uppercase;
+    color:var(--dim); text-decoration:none; pointer-events:auto; display:inline-flex; align-items:center; gap:7px;
+    padding:8px 15px; border:0.5px solid var(--line); border-radius:20px; background:rgba(6,8,16,0.5);
+    backdrop-filter:blur(8px); transition:all 0.18s; text-shadow:0 2px 20px rgba(0,0,0,1); white-space:nowrap; }
+  .hdr .nav-link:hover { color:#e8b563; border-color:rgba(232,181,99,0.4); background:rgba(232,181,99,0.08); }
 
   /* era readout — tells you where in evolutionary time you are */
   #era { position:absolute; bottom:78px; right:30px; z-index:30; text-align:right; pointer-events:none; text-shadow:0 2px 12px rgba(0,0,0,1); max-width:260px; }
@@ -151,6 +156,7 @@
     .hdr { padding:16px 18px; flex-direction:column; align-items:flex-start; gap:2px; }
     .hdr .t { font-size:15px; }
     .hdr .s { display:none; }
+    .hdr .nav-link { display:none; }
     #era { top:auto; bottom:150px; right:16px; left:16px; text-align:center; }
     #era .e-lbl { font-size:9px; }
     #era .e-name { font-size:12px; }
@@ -210,6 +216,7 @@
 
   <div class="hdr">
     <div class="t">The Origin <span>· how the craft evolved</span></div>
+    <a class="nav-link" href="/intention-of-effort.html">Read the essay &rarr;</a>
   </div>
   <div id="era"><div class="e-lbl">you are viewing</div><div class="e-name" id="eraName">the whole evolution</div></div>
 

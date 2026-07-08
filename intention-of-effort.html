@@ -27,15 +27,16 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 /* ============ NAV ============ */
 .nav {
   position: fixed; top: 0; left: 0; right: 0; z-index: 100;
-  padding: 24px 40px;
+  padding: 20px 40px;
   display: flex; justify-content: space-between; align-items: center;
-  background: rgba(232,181,99,0.85);
+  background: rgba(5,7,14,0.72);
   backdrop-filter: blur(16px);
-  border-bottom: 1px solid rgba(255,255,255,0.15);
+  border-bottom: 0.5px solid rgba(255,255,255,0.1);
 }
+.nav-right { display: flex; align-items: center; gap: 26px; }
 .nav-brand { font-family: var(--serif); font-size: 18px; font-weight: 400; color: var(--white); letter-spacing: 1px; text-transform: uppercase; }
-.nav-link { font-family: var(--mono); font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.6); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; transition: color 0.2s; }
-.nav-link:hover { color: var(--white); }
+.nav-link { font-family: var(--mono); font-size: 11px; font-weight: 600; color: rgba(255,255,255,0.55); text-decoration: none; letter-spacing: 2px; text-transform: uppercase; transition: color 0.2s; white-space: nowrap; }
+.nav-link:hover { color: var(--gold); }
 
 /* ============ HERO (blue bg) ============ */
 .hero {
@@ -258,6 +259,8 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
   .white-section, .blue-section { padding: 60px 20px; }
   .nav { padding: 18px 20px; }
   .nav-brand { font-size: 14px; }
+  .nav-right { gap: 16px; }
+  .nav-link { font-size: 10px; letter-spacing: 1px; }
   .mind, .node { padding: 20px 16px; }
   .toc-grid { grid-template-columns: 1fr; gap: 28px; }
   .toc-title { font-size: 24px; }
@@ -287,7 +290,10 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 <!-- NAV -->
 <nav class="nav">
   <div class="nav-brand">Nithin Nair</div>
-  <a class="nav-link" href="https://www.linkedin.com/in/nithincapital" target="_blank">LinkedIn →</a>
+  <div class="nav-right">
+    <a class="nav-link" href="/">← The Origin</a>
+    <a class="nav-link" href="https://www.linkedin.com/in/nithincapital" target="_blank">LinkedIn →</a>
+  </div>
 </nav>
 
 <!-- HERO (blue) -->
