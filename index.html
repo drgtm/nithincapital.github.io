@@ -73,6 +73,24 @@
   .d-link:hover { background:rgba(255,255,255,0.05); transform:translateX(3px); }
   .d-link .k { width:7px; height:7px; border-radius:50%; flex-shrink:0; }
   .d-link .n { font-size:10px; color:var(--dimmer); margin-left:auto; }
+  #dlMemory { margin-top:28px; width:100%; padding:14px 18px; border-radius:10px; cursor:pointer;
+    font-family:var(--mono); font-size:12px; letter-spacing:0.06em; font-weight:600;
+    color:#7fe0b0; background:rgba(93,202,165,0.10); border:0.5px solid rgba(93,202,165,0.4);
+    transition:all 0.18s; display:flex; align-items:center; justify-content:center; gap:8px; }
+  #dlMemory:hover { background:rgba(93,202,165,0.18); border-color:#5dcaa5; color:#a8f0d0; }
+  #dlMemory:active { transform:translateY(1px); }
+  /* in-panel AI prompt block */
+  .d-prompt-wrap { margin-top:22px; }
+  .d-prompt-head { display:flex; align-items:center; justify-content:space-between; margin:20px 0 8px; }
+  .d-prompt-head .d-lbl { margin:0; }
+  .d-copy { font-family:var(--mono); font-size:10px; letter-spacing:0.08em; text-transform:uppercase;
+    color:#7fe0b0; background:rgba(93,202,165,0.10); border:0.5px solid rgba(93,202,165,0.35);
+    border-radius:7px; padding:6px 11px; cursor:pointer; transition:all 0.15s; white-space:nowrap; }
+  .d-copy:hover { background:rgba(93,202,165,0.2); color:#a8f0d0; }
+  .d-prompt { font-family:var(--mono); font-size:11.5px; line-height:1.6; color:#c4cbd2;
+    background:rgba(255,255,255,0.03); border:0.5px solid var(--line); border-radius:9px;
+    padding:14px 15px; max-height:260px; overflow-y:auto; white-space:pre-wrap; word-break:break-word; }
+  .d-prompt::-webkit-scrollbar { width:5px; } .d-prompt::-webkit-scrollbar-thumb { background:rgba(255,255,255,0.12); border-radius:3px; }
   .pc { position:absolute; top:26px; right:28px; width:30px; height:30px; border-radius:50%;
     border:0.5px solid var(--line); background:rgba(255,255,255,0.05); cursor:pointer; display:flex;
     align-items:center; justify-content:center; color:var(--dim); font-size:17px; transition:all 0.16s; z-index:2; }
@@ -241,6 +259,7 @@
     <div class="d-num" id="dNum"></div>
     <div class="d-t" id="dT"></div>
     <div id="dContent"></div>
+    <button id="dlMemory" onclick="downloadMemory(activeOrb)">&#8595; Download memory</button>
   </div>
 
   <div id="tip"><div class="tn" id="tipN"></div><div class="tt" id="tipT"></div><div class="tg" id="tipG"></div><div class="th" id="tipH">click to open</div></div>
@@ -763,7 +782,26 @@ function openDetail(o){ activeOrb=o;
     document.getElementById('dT').textContent='The source';
     dc.innerHTML=`<div class="d-body" style="background:rgba(240,200,144,0.06);border:0.5px solid rgba(240,200,144,0.2);font-size:14px">${esc(o.body)}</div>`;
   }
+  // append the tailored AI prompt block (copy-ready) to every blob
+  const promptText = buildPrompt(o);
+  const wrap=document.createElement('div');
+  wrap.className='d-prompt-wrap';
+  wrap.innerHTML=`
+    <div class="d-prompt-head">
+      <div class="d-lbl">AI prompt · playbook + live drill</div>
+      <button class="d-copy" onclick="copyPrompt(this)">Copy prompt</button>
+    </div>
+    <div class="d-prompt"></div>`;
+  wrap.querySelector('.d-prompt').textContent=promptText; // textContent avoids HTML-injection & keeps formatting
+  dc.appendChild(wrap);
   document.getElementById('detPanel').classList.add('open');
+}
+function copyPrompt(btn){
+  const txt = btn.closest('.d-prompt-wrap').querySelector('.d-prompt').textContent;
+  navigator.clipboard.writeText(txt).then(()=>{
+    const old=btn.textContent; btn.textContent='Copied ✓';
+    setTimeout(()=>{ btn.textContent=old; }, 1600);
+  }).catch(()=>{ btn.textContent='Copy failed'; setTimeout(()=>{ btn.textContent='Copy prompt'; },1600); });
 }
 function fillLinks(nums,kind){ const el=document.getElementById('dLinks'); if(!el)return; el.innerHTML='';
   nums.forEach(n=>{ const t=humanByNum[n]; if(!t)return;
@@ -774,6 +812,203 @@ function fillLinks(nums,kind){ const el=document.getElementById('dLinks'); if(!e
   if(!nums.length) el.innerHTML='<div style="font-size:11.5px;color:var(--dimmer)">A foundational capability — stands on its own.</div>';
 }
 function esc(s){ return (s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+// ---- Download "memory": a rich, tailored markdown playbook per blob, reflecting its interlinks ----
+function slug(s){ return (s||'memory').toLowerCase().replace(/[^a-z0-9]+/g,'-').replace(/^-+|-+$/g,'').slice(0,60); }
+function evoStage(ev){ return ev<0.3?'a foundational layer, close to the source — raw human skill that worked before any tool existed'
+  : ev<0.6?'a middle layer — skill that evolved as the craft matured and the tools arrived'
+  : 'an advanced layer — the modern edge of what humans do, right up against where AI begins'; }
+function linkedLines(nums){
+  const out=[];
+  (nums||[]).forEach(n=>{ const t=humanByNum[n]; if(t) out.push(`- **${t[1]}** — \`#${t[0]}\` · _${BUCKETS[t[2]]}_`); });
+  return out.length?out.join('\n'):'_This capability stands on its own — no direct dependencies mapped._';
+}
+function buildMemory(o){
+  const foot = `\n\n---\n\n_From **The Origin** — the evolution of the cold-calling craft._\n_The intention of effort · Nithin Nair_\n_Every skill descends from one source: the intention to understand before you sell._\n`;
+  if(o.kind==='human'){
+    return `# ${o.title}
+
+> **${BUCKETS[o.bucket]}** · Skill ${o.num} of 200
+> This is ${evoStage(o.ev)}.
+
+## The principle
+Every skill in this craft descends from a single source: one human trying to move another with words and intention. This one lives in **${BUCKETS[o.bucket]}** — ${evoStage(o.ev)}. Master the intention behind it before you drill the mechanics; the technique is the interface, the intention is the engine.
+
+## What great looks like
+${o.great||'—'}
+
+## What mediocre looks like
+${o.med||'—'}
+
+## The failure mode — avoid this
+${o.bad||'—'}
+
+## How to build it (the drill)
+${o.drill||'—'}
+
+## The move
+Great here is not about effort or volume — it's about the read. Do the version above under real pressure, repeatedly, until the recognition runs automatically and you no longer have to think about it.
+
+## Connected skills — the web this sits in
+This skill reinforces and is reinforced by:
+
+${linkedLines(o.links)}
+
+> Pull any of these and this one gets easier. They evolved together.
+${foot}`;
+  }
+  if(o.kind==='ai'){
+    return `# ${o.title}
+
+> **${AICAT[o.cat]}**
+> An AI capability on the frontier of the craft.
+
+## What it does
+${o.does||'—'}
+
+## Why it beats the human way
+${o.why||'—'}
+
+## How to deploy this
+Treat this as amplification, not replacement. The AI extends the reach of a human intention — it does not supply the intention. Point it at the human skills below, let it do the scale-and-speed work, and keep the judgment human.
+
+## Human skills it augments
+${linkedLines(o.hlinks)}
+
+> AI does not replace the source. It amplifies the reach of it. The craft evolves; the intention underneath stays human.
+${foot}`;
+  }
+  if(o.kind==='open'){
+    return `# ${o.title}
+
+> **${OPENCAT[o.cat]}** · no clean solution
+> An honest gap in the craft — neither human skill nor AI has truly solved it.
+
+## What it is
+${o.whatis||'—'}
+
+## Why there's no good answer
+${o.why||'—'}
+
+## How to hold it
+You don't solve this one — you navigate it. The move is honesty: name the tension out loud rather than pretending a technique dissolves it. The reps who last are the ones who recognise an unsolved problem for what it is and spend their effort where it can actually move something.
+
+> A real craft always has a frontier of the unsolved. Mapping it honestly is part of the discipline.
+${foot}`;
+  }
+  // origin
+  return `# The Source
+
+> Where the art began.
+
+${o.body||''}
+
+## What this teaches
+This is what the craft never stops being underneath. Every human skill, every AI capability, every unsolved problem in this field is an elaboration of this single act. Strip away the tools and the techniques, and this is what remains.
+${foot}`;
+}
+function memoryFilename(o){
+  return (o.kind==='human'? (o.num+'-'+slug(o.title)) : o.kind==='origin'? 'the-source' : (o.kind+'-'+slug(o.title))) + '.md';
+}
+// ---- build the tailored AI system prompt for a blob (mirrors the field guide) ----
+const PROMPT_GUARD = "Ground everything in reality: if you cite a number, a benchmark, or a technique, it must be something you can actually justify — no invented statistics, no hype, no motivational filler. If you don't know a real figure, say so and reason from first principles instead. Prefer specific, concrete language over generic advice. Distinguish clearly between what is established practice and what is your inference.";
+function linkNames(nums){
+  const out=[]; (nums||[]).forEach(n=>{ const t=humanByNum[n]; if(t) out.push(t[1]); });
+  return out.length?out.join('; '):'none mapped';
+}
+function buildPrompt(o){
+  if(o.kind==='human'){
+    const region = (REGIONS[o.bucket]&&REGIONS[o.bucket][0])||BUCKETS[o.bucket];
+    return `You are an elite cold-calling and SDR coach with deep, hard-won experience. Your job is to make me genuinely capable at one specific skill, not to impress me with jargon.
+
+THE SKILL: "${o.title}"
+REGION OF THE CRAFT: ${region}
+MATURITY: ${evoStage(o.ev)}
+
+WHAT SEPARATES LEVELS (use these as your calibration, do not just repeat them):
+- Great looks like: ${o.great||'—'}
+- Mediocre looks like: ${o.med||'—'}
+- The failure mode to kill: ${o.bad||'—'}
+
+THIS SKILL CONNECTS TO: ${linkNames(o.links)}. Reference these where they genuinely reinforce the skill.
+
+FIRST, produce a real operator's PLAYBOOK for this skill:
+1. The principle — why this skill exists and what it is really about underneath the mechanics.
+2. The specific moves — the actual, concrete actions, phrasing, or scripts that produce the "great" behaviour above. Be specific enough that I could do it tomorrow.
+3. The failure diagnosis — how to catch yourself sliding into the mediocre or failure version, and the exact correction.
+4. A measurable practice protocol — how I drill this, what I track, and how I know I'm improving.
+5. The outcome tree — for the key moment this skill governs, map the likely reactions I'll get, bucketed as POSITIVE, NEUTRAL, and NEGATIVE. For each branch, give the single best NEXT move that keeps the path advancing toward a good outcome (a booked meeting, a real conversation, or a clean disqualification). Keep it high-level: the branch, the read, and the next step — not a rigid script. The point is to teach me to think in positions and next-moves, like a chess player, not to memorise lines.
+
+THEN, offer to drill it with me: propose a roleplay where you play the prospect and put me through this skill live. Make the drill ADAPTIVE — branch your responses based on what I actually say, walking me down the positive/neutral/negative paths from the outcome tree, and give feedback against the "great" bar above after each exchange. Wait for me to accept before starting.
+
+GUARDRAILS: ${PROMPT_GUARD}`;
+  }
+  if(o.kind==='ai'){
+    return `You are a pragmatic GTM/AI-in-sales advisor. Help me actually deploy one AI capability well, honestly, without hype.
+
+THE CAPABILITY: "${o.title}"
+MATURITY: ${AICAT[o.cat]}
+WHAT IT DOES: ${o.does||'—'}
+WHY IT BEATS THE HUMAN WAY: ${o.why||'—'}
+HUMAN SKILLS IT AUGMENTS: ${linkNames(o.hlinks)}
+
+FIRST, produce a deployment PLAYBOOK:
+1. Where this genuinely helps vs. where it is overhyped — be honest about the limits, especially if this is emerging or frontier tech.
+2. How to actually implement it — the workflow, the tools or model setup, what a good vs. bad implementation looks like.
+3. How to keep the human judgment in the loop so the AI amplifies intention rather than replacing it.
+4. How to measure whether it's actually working.
+5. The outcome tree — map the likely results of deploying this (it works as hoped / partial or mixed result / it backfires or misleads), and for each, the right next move to either double down, adjust, or pull back. Keep it high-level: teach me to read where a deployment is heading and choose the next step that leads to a better outcome.
+
+THEN, offer to help me set it up: propose that we design the actual prompt, workflow, or configuration together for my specific situation, and simulate the likely outcomes before I commit. Wait for me to accept.
+
+GUARDRAILS: ${PROMPT_GUARD}`;
+  }
+  if(o.kind==='open'){
+    return `You are a candid sales strategist. I want to think clearly about a genuinely unsolved problem in the craft — not get a fake tidy answer.
+
+THE OPEN PROBLEM: "${o.title}"
+TYPE: ${OPENCAT[o.cat]}
+WHAT IT IS: ${o.whatis||'—'}
+WHY THERE'S NO CLEAN ANSWER: ${o.why||'—'}
+
+FIRST, help me navigate it:
+1. Why the obvious "solutions" fail — walk through the tempting bad answers and why they don't hold.
+2. The least-bad approaches that experienced people actually use, with their tradeoffs stated honestly.
+3. How to tell, in a live situation, whether this problem is even worth spending my effort on or whether I should walk away.
+4. The outcome tree — map how these situations typically resolve, bucketed as POSITIVE (rare wins and what made them possible), NEUTRAL (holding patterns and how to not waste effort in them), and NEGATIVE (the likely losses and how to exit cleanly while preserving credibility for later). For each, the right next move — including, honestly, when the right next move is to walk away.
+
+THEN, offer to pressure-test my thinking: propose that I describe a real situation where I'm hitting this, and you play devil's advocate against my approach, branching based on how I say the situation is actually unfolding. Wait for me to accept.
+
+GUARDRAILS: ${PROMPT_GUARD} Above all: do NOT pretend this problem is solved. If the honest answer is "you mostly lose these," say so.`;
+  }
+  // origin
+  return `You are a thoughtful guide to the craft of persuasion at its most fundamental. I want to understand "the source" — the irreducible act underneath all sales technique: one human trying to move another with words and intention, before any tool or script.
+
+Help me internalise this as a practical stance, not a platitude: what it actually means to lead with the intention to understand before I sell, how to tell when I'm running that intention vs. just performing it, and how everything downstream (openers, objections, closes) changes when the intention is right. THEN offer to work through a real interaction of mine against this lens. Wait for me to accept.
+
+GUARDRAILS: ${PROMPT_GUARD}`;
+}
+async function downloadMemory(o){
+  if(!o) return;
+  const btn=document.getElementById('dlMemory');
+  const label=btn.innerHTML;
+  btn.innerHTML='… fetching';
+  const fname=memoryFilename(o);
+  let md=null;
+  // try the authored file in /memories first
+  try{
+    const res=await fetch('memories/'+fname, {cache:'no-store'});
+    if(res.ok){ const txt=await res.text(); if(txt && txt.trim().length>40) md=txt; }
+  }catch(e){ /* offline or missing — fall back */ }
+  // fall back to the generated template if no authored file yet
+  if(!md) md=buildMemory(o);
+  const blob=new Blob([md],{type:'text/markdown;charset=utf-8'});
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a'); a.href=url; a.download=fname; document.body.appendChild(a); a.click();
+  setTimeout(()=>{ document.body.removeChild(a); URL.revokeObjectURL(url); }, 100);
+  btn.innerHTML=label;
+}
+
 function closeDetail(){ activeOrb=null; document.getElementById('detPanel').classList.remove('open');
   document.body.classList.remove('sheet-open');
   // on mobile, also dismiss the top context banner so the field is clear
