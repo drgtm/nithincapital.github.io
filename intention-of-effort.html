@@ -47,6 +47,20 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
   max-width: 1200px; margin: 0 auto;
   position: relative;
 }
+.hero-inner { display: grid; grid-template-columns: 1.1fr 0.9fr; gap: 56px; align-items: center; width: 100%; }
+.hero-text { min-width: 0; }
+.hero-entropy { display: flex; flex-direction: column; align-items: center; gap: 14px;
+  opacity: 0; animation: slideUp 1.1s cubic-bezier(0.16,1,0.3,1) 1s forwards; }
+.entropy-frame { position: relative; width: 100%; max-width: 440px; aspect-ratio: 1 / 1;
+  border-radius: 10px; overflow: hidden; cursor: crosshair;
+  border: 0.5px solid rgba(255,255,255,0.08); background: rgba(255,255,255,0.012); }
+.entropy-frame::after { content: ''; position: absolute; inset: 0; border-radius: 10px;
+  border: 0.5px solid rgba(232,181,99,0.0); pointer-events: none; transition: border-color 0.4s; }
+.entropy-frame:hover::after { border-color: rgba(232,181,99,0.22); }
+#heroEntropy { display: block; width: 100%; height: 100%; }
+.entropy-cap { font-family: var(--mono); font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+  color: rgba(255,255,255,0.32); }
+.entropy-cap span { color: rgba(232,181,99,0.55); }
 .hero-label {
   font-family: var(--mono);
   font-size: 11px; font-weight: 600;
@@ -254,6 +268,8 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 /* ============ RESPONSIVE ============ */
 @media (max-width: 600px) {
   .hero { padding: 120px 20px 60px; }
+  .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+  .entropy-frame { max-width: 320px; margin: 0 auto; }
   .hero-sub { font-size: 12px; color: rgba(255,255,255,0.6); }
   .hero-label { font-size: 10px; }
   .hero-meta span { font-size: 10px; }
@@ -299,21 +315,31 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 
 <!-- HERO (blue) -->
 <header class="hero">
-  <div class="hero-label"></div>
-  <h1>
-    <span class="line">The</span>
-    <span class="line">Intention</span>
-    <span class="line">of Effort</span>
-  </h1>
-  <div class="hero-sub">
-    11:47pm. Bangalore. A phone line connects to a stranger in Oklahoma who does not know I exist. They say one word. I have three seconds to decide everything that happens next.
-  </div>
-  <div class="hero-meta">
-    <span>Nithin Nair</span>
-    <span class="dot"></span>
-    <span>June 2026</span>
-    <span class="dot"></span>
-    <span>Bangalore</span>
+  <div class="hero-inner">
+    <div class="hero-text">
+      <div class="hero-label"></div>
+      <h1>
+        <span class="line">The</span>
+        <span class="line">Intention</span>
+        <span class="line">of Effort</span>
+      </h1>
+      <div class="hero-sub">
+        11:47pm. Bangalore. A phone line connects to a stranger in Oklahoma who does not know I exist. They say one word. I have three seconds to decide everything that happens next.
+      </div>
+      <div class="hero-meta">
+        <span>Nithin Nair</span>
+        <span class="dot"></span>
+        <span>June 2026</span>
+        <span class="dot"></span>
+        <span>Bangalore</span>
+      </div>
+    </div>
+    <div class="hero-entropy" aria-hidden="true">
+      <div class="entropy-frame">
+        <canvas id="heroEntropy"></canvas>
+      </div>
+      <div class="entropy-cap">structure &nbsp;·&nbsp; the unknown on the line — <span>hover to disturb it</span></div>
+    </div>
   </div>
 </header>
 
@@ -800,6 +826,190 @@ const observer = new IntersectionObserver((entries) => {
   entries.forEach(entry => { if (entry.isIntersecting) entry.target.classList.add('visible'); });
 }, { threshold: 0.1, rootMargin: '0px 0px -30px 0px' });
 document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+
+// ---- Hero entropy field: two-tone (white order / gold chaos) with magnetic push-repel + springy return ----
+(function(){
+  const canvas = document.getElementById('heroEntropy');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  if (!ctx) return;
+  const GOLD = [232, 181, 99];
+  const WHITE = [243, 243, 240];
+  let size = 400, dpr = Math.min(window.devicePixelRatio || 1, 2);
+
+  function fit(){
+    const rect = canvas.getBoundingClientRect();
+    size = Math.max(200, rect.width);
+    dpr = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = size * dpr; canvas.height = size * dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+
+  const GRID = 22;
+  let SPACING = size / GRID;
+  const NEIGHBOR_R = 92;
+  let CONNECT_R = 34, CHAOS_R = 56;
+  let mx = -9999, my = -9999;        // smoothed cursor
+  let tmx = -9999, tmy = -9999;      // raw target
+  let mAct = false, hover = 0;       // hover eases 0->1 present, 1->0 gone
+
+  canvas.addEventListener('mousemove', e => {
+    const r = canvas.getBoundingClientRect();
+    tmx = (e.clientX - r.left) * (size / r.width);
+    tmy = (e.clientY - r.top) * (size / r.height);
+    if (!mAct){ mx = tmx; my = tmy; }   // jump on first entry, then ease
+    mAct = true;
+  });
+  canvas.addEventListener('mouseleave', () => { mAct = false; });
+  canvas.addEventListener('touchmove', e => {
+    const r = canvas.getBoundingClientRect(), t = e.touches[0];
+    tmx = (t.clientX - r.left) * (size / r.width);
+    tmy = (t.clientY - r.top) * (size / r.height);
+    if (!mAct){ mx = tmx; my = tmy; }
+    mAct = true;
+  }, {passive:true});
+  canvas.addEventListener('touchend', () => { mAct = false; });
+
+  class P {
+    constructor(x, y, order){
+      this.ox = x; this.oy = y; this.x = x; this.y = y;
+      this.order = order; this.size = order ? 1.6 : 1.9;
+      this.sx = 0; this.sy = 0;            // spring velocity
+      this.infl = 0;
+      this.phase = Math.random() * 6.2832; // for chaos wander
+      this.freq = 0.6 + Math.random() * 0.9;
+      this.amp = order ? 0 : 5 + Math.random() * 7; // chaos wander radius
+      this.neighbors = [];
+    }
+    update(dt){
+      // cursor interaction: order side REPELS (pushed away), chaos side ATTRACTS toward a ring.
+      // All forces scale by global `hover` (eased 0->1) so entering/leaving fades smoothly.
+      if (hover > 0.001){
+        const dx = this.x - mx, dy = this.y - my, d = Math.hypot(dx, dy) || 1;
+        if (this.order){
+          const R = 100;
+          if (d < R){
+            const t = 1 - d/R;
+            const ease = t*t*(3 - 2*t);              // smoothstep falloff, no hard edge
+            const force = ease * 4.4 * hover;
+            this.sx += (dx/d) * force;
+            this.sy += (dy/d) * force;
+            this.infl = Math.min(1, this.infl + 0.16 * hover);
+          }
+        } else {
+          const R = 150, RING = 34;
+          if (d < R){
+            const edge = 1 - d/R;
+            const ease = edge*edge*(3 - 2*edge);     // fade force near the outer edge
+            const toward = (d - RING);               // signed: pull in outside ring, push out inside
+            const force = (toward / R) * 3.6 * ease * hover;
+            this.sx -= (dx/d) * force;
+            this.sy -= (dy/d) * force;
+            // tangential swirl, also eased and hover-scaled
+            const swirl = 0.25 * ease * hover;
+            this.sx += (-dy/d) * swirl;
+            this.sy += ( dx/d) * swirl;
+            this.infl = Math.min(1, this.infl + 0.14 * hover);
+          }
+        }
+      }
+      // home target — for chaos, the "home" gently orbits so the field stays alive but bounded
+      let tx = this.ox, ty = this.oy;
+      if (!this.order){
+        this.phase += 0.018 * this.freq;
+        tx = this.ox + Math.cos(this.phase) * this.amp;
+        ty = this.oy + Math.sin(this.phase * 1.3) * this.amp;
+      }
+      // spring toward target — stronger home pull on chaos so it snaps back lively, no clumping
+      const k = this.order ? 0.05 : 0.05;
+      const damp = this.order ? 0.80 : 0.84;
+      this.sx += (tx - this.x) * k;
+      this.sy += (ty - this.y) * k;
+      this.sx *= damp; this.sy *= damp;
+      this.x += this.sx; this.y += this.sy;
+      // hard clamp to each half so nothing crosses the seam or clumps out of bounds
+      if (this.order){ this.x = Math.min(this.x, size/2 - 1); }
+      else { this.x = Math.max(this.x, size/2 + 1); }
+      this.x = Math.max(0, Math.min(size, this.x));
+      this.y = Math.max(0, Math.min(size, this.y));
+      this.infl *= 0.94;
+    }
+    draw(){
+      const col = this.order ? WHITE : GOLD;
+      const a = this.order ? (0.7 - this.infl*0.35) : (0.62 + this.infl*0.2);
+      ctx.fillStyle = `rgba(${col[0]},${col[1]},${col[2]},${a})`;
+      ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, 6.2832); ctx.fill();
+    }
+  }
+
+  let parts = [];
+  function build(){
+    SPACING = size / GRID;
+    CONNECT_R = SPACING * 1.7;   // nearest-neighbour lattice links only
+    CHAOS_R = SPACING * 2.8;     // longer reach so the gold web actually forms
+    parts = [];
+    for (let i=0;i<GRID;i++) for (let j=0;j<GRID;j++){
+      const x = SPACING*i + SPACING/2, y = SPACING*j + SPACING/2;
+      parts.push(new P(x, y, x < size/2));
+    }
+  }
+
+  function neighbors(){
+    const R = Math.max(NEIGHBOR_R, CHAOS_R + 4);
+    for (const p of parts){
+      p.neighbors = [];
+      for (const o of parts){
+        if (o === p) continue;
+        if (Math.hypot(p.x-o.x, p.y-o.y) < R) p.neighbors.push(o);
+      }
+    }
+  }
+
+  let t = 0, raf;
+  function loop(){
+    ctx.clearRect(0,0,size,size);
+    // ease hover strength (up when present, down when gone) and smooth the cursor position
+    hover += ((mAct ? 1 : 0) - hover) * 0.08;
+    if (mAct){ mx += (tmx - mx) * 0.2; my += (tmy - my) * 0.2; }
+    if (t % 30 === 0) neighbors();
+    // connections
+    for (const p of parts){
+      for (const n of p.neighbors){
+        // never draw links across the order/chaos seam
+        if (p.order !== n.order) continue;
+        const d = Math.hypot(p.x-n.x, p.y-n.y);
+        if (p.order){
+          if (d < CONNECT_R){
+            const a = 0.18 * (1 - d/CONNECT_R);   // crisp white lattice
+            ctx.strokeStyle = `rgba(${WHITE[0]},${WHITE[1]},${WHITE[2]},${a})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(n.x,n.y); ctx.stroke();
+          }
+        } else {
+          if (d < CHAOS_R){
+            const a = 0.22 * (1 - d/CHAOS_R);      // visible gold web, longer reach
+            ctx.strokeStyle = `rgba(${GOLD[0]},${GOLD[1]},${GOLD[2]},${a})`;
+            ctx.lineWidth = 0.5;
+            ctx.beginPath(); ctx.moveTo(p.x,p.y); ctx.lineTo(n.x,n.y); ctx.stroke();
+          }
+        }
+      }
+    }
+    for (const p of parts){ p.update(); p.draw(); }
+    // divider: order/chaos seam
+    const grad = ctx.createLinearGradient(size/2-1,0,size/2+1,0);
+    grad.addColorStop(0, 'rgba(243,243,240,0.18)');
+    grad.addColorStop(1, 'rgba(232,181,99,0.22)');
+    ctx.strokeStyle = grad; ctx.lineWidth = 0.75;
+    ctx.beginPath(); ctx.moveTo(size/2,0); ctx.lineTo(size/2,size); ctx.stroke();
+    t++; raf = requestAnimationFrame(loop);
+  }
+
+  fit(); build(); loop();
+  let rt;
+  window.addEventListener('resize', () => { clearTimeout(rt); rt = setTimeout(()=>{ fit(); build(); }, 150); });
+  window.addEventListener('beforeunload', () => raf && cancelAnimationFrame(raf));
+})();
 </script>
 
 </body>
