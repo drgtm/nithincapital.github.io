@@ -308,7 +308,8 @@ body { font-family: var(--mono); background: var(--blue); color: var(--white); -
 <nav class="nav">
   <div class="nav-brand">Nithin Nair</div>
   <div class="nav-right">
-    <a class="nav-link" href="/">← The Origin</a>
+    <a class="nav-link" href="the-origin.html">← The Origin</a>
+    <a class="nav-link" href="/">Home</a>
     <a class="nav-link" href="https://www.linkedin.com/in/nithincapital" target="_blank">LinkedIn →</a>
   </div>
 </nav>
@@ -1001,8 +1002,9 @@ document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
     grad.addColorStop(1, 'rgba(232,181,99,0.22)');
     ctx.strokeStyle = grad; ctx.lineWidth = 0.75;
     ctx.beginPath(); ctx.moveTo(size/2,0); ctx.lineTo(size/2,size); ctx.stroke();
-    t++; raf = requestAnimationFrame(loop);
+    t++; if(!document.hidden) raf = requestAnimationFrame(loop);
   }
+  document.addEventListener('visibilitychange',()=>{ if(!document.hidden){ if(raf) cancelAnimationFrame(raf); raf=requestAnimationFrame(loop); } });
 
   fit(); build(); loop();
   let rt;
